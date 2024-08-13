@@ -25,9 +25,9 @@ import pandas as pd
 #load_dotenv()
 
 # Fetch credentials and region
-aws_access_key_id = st.secrets("AWS_ACCESS_KEY_ID")
-aws_secret_access_key = st.secrets("AWS_SECRET_ACCESS_KEY")
-region_name = st.secrets("AWS_DEFAULT_REGION")
+aws_access_key_id = st.secrets["AWS_ACCESS_KEY_ID"]
+aws_secret_access_key = st.secrets["AWS_SECRET_ACCESS_KEY"]
+region_name = st.secrets["AWS_DEFAULT_REGION"]
 
 # Initialize the S3 and Textract clients
 s3 = boto3.client(
