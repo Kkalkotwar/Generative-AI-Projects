@@ -1,4 +1,4 @@
-streamlit as
+streamlit
 boto3
 os
 time
