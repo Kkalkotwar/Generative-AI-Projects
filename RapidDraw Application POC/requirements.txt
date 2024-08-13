@@ -1,6 +1,0 @@
-streamlit
-boto3
-os
-time
-pandas
-dotenv 
