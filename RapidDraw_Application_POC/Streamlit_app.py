@@ -19,10 +19,10 @@ import boto3
 import os
 import time
 import pandas as pd
-#from dotenv import load_dotenv
+import openpyxl
 
-# Load environment variables
-#load_dotenv()
+
+
 
 # Fetch credentials and region
 aws_access_key_id = st.secrets["AWS_ACCESS_KEY_ID"]
