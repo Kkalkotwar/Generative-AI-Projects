@@ -1,7 +1,6 @@
 from pdf2docx import Converter
 import streamlit as st
 import boto3
-import os
 import time
 import pandas as pd
 import PyPDF2
