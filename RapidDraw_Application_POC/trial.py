@@ -4,10 +4,7 @@ import boto3
 import os
 import time
 import pandas as pd
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
 
 def pdf_to_word(pdf_file, word_file):
     # Create a Converter object
