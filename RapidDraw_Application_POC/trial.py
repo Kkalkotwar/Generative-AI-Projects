@@ -4,7 +4,7 @@ import boto3
 import os
 import time
 import pandas as pd
-
+import PyPDF2
 
 def pdf_to_word(pdf_file, word_file):
     # Create a Converter object
@@ -15,9 +15,24 @@ def pdf_to_word(pdf_file, word_file):
     cv.close()
 
 def check_pdf_type(pdf_file):
-    # Simple check based on filename (for example)
-    # You can replace this with more sophisticated checks
-    return 'sample_2' in pdf_file.lower()
+    # Open the PDF file and read its contents
+    with open(pdf_file, "rb") as f:
+        reader = PyPDF2.PdfReader(f)
+        num_pages = len(reader.pages)
+
+        # Extract text from the first few pages (or entire PDF if small)
+        text = ""
+        for page_num in range(min(num_pages, 5)):  # Checking only the first 5 pages for efficiency
+            page = reader.pages[page_num]
+            text += page.extract_text()
+
+        # Check for specific keywords or phrases that might indicate it's a table-heavy PDF
+        if "Table" in text or "Sample" in text:
+            return True
+        
+        # Additional conditions can be added here as needed
+
+    return False
 
 # Fetch credentials and region
 aws_access_key_id = st.secrets["AWS_ACCESS_KEY_ID"]
@@ -44,13 +59,16 @@ st.title("RapidDraw - Manufacturing Drawing Analysis")
 uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
 
 if uploaded_file is not None:
-    pdf_type = check_pdf_type(uploaded_file.name)
+    # Save the uploaded file temporarily
+    with open("temp.pdf", "wb") as f:
+        f.write(uploaded_file.read())
+
+    # Determine the type of PDF using the enhanced check_pdf_type function
+    pdf_type = check_pdf_type("temp.pdf")
 
     if pdf_type:
-        # If PDF is of "sample_2" type, use CODE1 procedure
+        # If PDF is of the type that requires pdf2docx
         word_file = uploaded_file.name.replace('.pdf', '.docx')
-        with open("temp.pdf", "wb") as f:
-            f.write(uploaded_file.read())
         pdf_to_word("temp.pdf", word_file)
         st.write(f"Converted '{uploaded_file.name}' to '{word_file}'.")
 
@@ -64,10 +82,7 @@ if uploaded_file is not None:
             )
 
     else:
-        # Otherwise, follow CODE2 procedure
-        with open("temp.pdf", "wb") as f:
-            f.write(uploaded_file.read())
-
+        # Otherwise, follow Textract procedure
         # Upload the file to S3
         bucket_name = 'for-textract-use-case'
         file_key = 'uploaded_file.pdf'
